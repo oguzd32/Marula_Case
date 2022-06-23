@@ -1,11 +1,12 @@
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.Serialization;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float forwardSpeed = 10f;
     [SerializeField] private float extraSpeed = 3;
-    [SerializeField] private float xMoveSpeed = 3f;
+    [SerializeField] private float horizontalSpeed = 3f;
     [SerializeField] private float clampX = 1.7f;
     [SerializeField] private GameObject windParticle;
 
@@ -34,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if(!isStarted) return;
         
-        speed.x = TouchInput.SwerveDeltaX * 0.05f * xMoveSpeed;
+        speed.x = TouchInput.SwerveDeltaX * 0.05f * horizontalSpeed;
         speed.z = _ForwardSpeed;
         cc.SimpleMove(speed);
         

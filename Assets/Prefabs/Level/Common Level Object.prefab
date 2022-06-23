@@ -67,7 +67,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   forwardSpeed: 10
   extraSpeed: 3
-  xMoveSpeed: 8
+  horizontalSpeed: 12
   clampX: 1.85
   windParticle: {fileID: 3456573653743917995}
 --- !u!114 &8877653471519948548
