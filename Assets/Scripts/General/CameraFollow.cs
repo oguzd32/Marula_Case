@@ -1,6 +1,5 @@
-using System;
 using UnityEngine;
-using static Utilities;
+using  DG.Tweening;
 
 public class CameraFollow : MonoBehaviour
 {
@@ -16,7 +15,7 @@ public class CameraFollow : MonoBehaviour
 
     private void Start()
     {
-        target = _GameReferenceHolder.playerGameObject.transform;
+        target = GameReferenceHolder.Instance.playerController.GetCharacterTransform;
         offSet = transform.position - target.position;
     }
 
@@ -33,5 +32,10 @@ public class CameraFollow : MonoBehaviour
         }
 
         transform.position = targetPosition;
+    }
+
+    public void Shake(float duration)
+    {
+        transform.DOShakeRotation(duration, 2, 1);
     }
 }

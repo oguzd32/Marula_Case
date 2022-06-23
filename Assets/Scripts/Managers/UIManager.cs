@@ -1,11 +1,9 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using Random = System.Random;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -13,7 +11,7 @@ public class UIManager : MonoBehaviour
 
     public UnityEvent OnLevelStarted;
 
-    [Header("Gameobject References")] 
+    [Header("GameObject References")] 
     [SerializeField] private GameObject startUI = default;
     [SerializeField] private GameObject inGameUI = default;
     [SerializeField] private GameObject winUI = default;
@@ -21,15 +19,22 @@ public class UIManager : MonoBehaviour
 
     [Header("Text References")] 
     [SerializeField] private TextMeshProUGUI levelText;
-    [SerializeField] private TextMeshProUGUI endUILevelText;
+    [SerializeField] private TextMeshProUGUI inGameLevelText;
+    [SerializeField] private TextMeshProUGUI winGameLevelText;    
     [SerializeField] private TextMeshProUGUI coinText;
+    [SerializeField] private TextMeshProUGUI earnedCoinText;
 
+    [Header("Rectransform References")]
     [SerializeField] private RectTransform coinIconPrefab;
     [SerializeField] private RectTransform coinIcon;
+
+    [Space] 
+    [SerializeField] private Image powerUpButton;
 
     // private variables
     private int currentLevel = 0;
     private int currentCoinCount = 0;
+    private int earnedCoinCount = 0;
     
     private void Awake()
     {
@@ -40,7 +45,8 @@ public class UIManager : MonoBehaviour
     {
         currentLevel = PlayerPrefs.GetInt("Level", 0);
         currentCoinCount = PlayerPrefs.GetInt("Coin", 0);
-        levelText.text = $"LEVEL {currentLevel + 1}";
+        levelText.text = inGameLevelText.text = $"LEVEL {currentLevel + 1}";
+        winGameLevelText.text = $"LEVEL {currentLevel + 1} COMPLETED";
         coinText.text = currentCoinCount.ToString();
     }
 
@@ -73,7 +79,9 @@ public class UIManager : MonoBehaviour
         current.DOMove(coinIcon.position, 0.9f).OnComplete(() =>
             {
                 Destroy((current.gameObject));
-                currentCoinCount++;
+                currentCoinCount += 10;
+                earnedCoinCount += 10;
+                earnedCoinText.text = $"YOU EARNED {earnedCoinCount} COINS";
                 coinText.text = currentCoinCount.ToString();
             }
         );
@@ -97,6 +105,7 @@ public class UIManager : MonoBehaviour
     public void OnPlayerFailedLevel()
     {
         inGameUI.SetActive(false);
+        coinIcon.transform.parent.gameObject.SetActive(false);
         failUI.SetActive(true);
     }
     
@@ -104,6 +113,13 @@ public class UIManager : MonoBehaviour
     
     #region Button Functions
 
+    public void PowerUp()
+    {
+        powerUpButton.color = Color.gray;
+        powerUpButton.raycastTarget = false;
+        GameReferenceHolder.Instance.playerController.PowerUp();
+    }
+    
     public void OnPlayButtonClicked()
     {
         OnPlayerStartedLevel();
@@ -111,11 +127,15 @@ public class UIManager : MonoBehaviour
 
     public void OnRetryButtonClicked()
     {
+        DOTween.KillAll();
+        PlayerPrefs.SetInt("Coin", currentCoinCount);
         LevelLoader.Instance.RestartLevel();
     }
 
     public void OnNextButtonClicked()
     {
+        DOTween.KillAll();
+        PlayerPrefs.SetInt("Coin", currentCoinCount);
         LevelLoader.Instance.NextLevel();
     }
     

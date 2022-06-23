@@ -1,24 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float forwardSpeed = 10f;
+    [SerializeField] private float extraSpeed = 3;
     [SerializeField] private float xMoveSpeed = 3f;
     [SerializeField] private float clampX = 1.7f;
-    
+    [SerializeField] private GameObject windParticle;
+
     // cached components
     private CharacterController cc;
     
     // private variables
     private bool isStarted = false;
+    private float _ForwardSpeed;
 
     private Vector3 speed;
     
     void Start()
     {
         cc = GetComponent<CharacterController>();
+        _ForwardSpeed = forwardSpeed;
     }
 
     internal void StartGame()
@@ -31,8 +34,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if(!isStarted) return;
         
-        speed.x = TouchInput.MoveDirectionX * xMoveSpeed;
-        speed.z = forwardSpeed;
+        speed.x = TouchInput.SwerveDeltaX * 0.05f * xMoveSpeed;
+        speed.z = _ForwardSpeed;
         cc.SimpleMove(speed);
         
         Clamp();
@@ -45,5 +48,26 @@ public class PlayerMovement : MonoBehaviour
         tempPos.x = Mathf.Clamp(tempPos.x, -clampX, clampX);
 
         transform.position = tempPos;
+    }
+
+    public void IncreaseSpeed()
+    {
+        _ForwardSpeed += extraSpeed;
+        float totalSpeed = _ForwardSpeed + extraSpeed;
+
+        Sequence sequence = DOTween.Sequence();
+
+        sequence.AppendCallback(() => windParticle.SetActive(true));
+        sequence.AppendCallback(() => DOTween.To(() => _ForwardSpeed,
+            x => _ForwardSpeed
+                = x, totalSpeed,
+            1));
+
+        sequence.AppendInterval(5f);
+        sequence.AppendCallback(() => windParticle.SetActive(false));
+        sequence.AppendCallback(() => DOTween.To(() => _ForwardSpeed,
+            x => _ForwardSpeed
+                = x, forwardSpeed,
+            1));
     }
 }

@@ -2,46 +2,38 @@ using UnityEngine;
 
 public class TouchInput : MonoBehaviour
 {
+    [Header("Swerve Settings")]
+    [SerializeField] private float swerveThreshold = 2f;
 
-    [SerializeField] private float deadZone = 2f;
-    private static float _lastFrameFingerPositionX;
-    private static float _lastFrameFingerPositionY;
-    private static float _moveFactorX;
-    private static float _moveFactorY;
+    private static float _swerveLastXPos = 0;
+    private static float _swerveLastYPos = 0;
+    private static float _swerveDeltaX = 0;
+    private static float _swerveDeltaY = 0;
 
-    public static float MoveFactorX => _moveFactorX;
-    public static float MoveFactorY => _moveFactorY;
-    public static float MoveDirectionX => _moveFactorX != 0f ? Mathf.Sign(_moveFactorX) : 0f;
-    public static float MoveDirectionY => _moveFactorY != 0f ? Mathf.Sign(_moveFactorY) : 0f;
+    public static float SwerveDeltaX => _swerveDeltaX;
+    public static float SwerveDeltaY => _swerveDeltaY;
 
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            _lastFrameFingerPositionX = Input.mousePosition.x;
-            _lastFrameFingerPositionY = Input.mousePosition.y;
+            _swerveLastXPos = Input.mousePosition.x;
+            _swerveLastYPos = Input.mousePosition.y;
         }
         else if (Input.GetMouseButton(0))
         {
-            _moveFactorX = Input.mousePosition.x - _lastFrameFingerPositionX;
-            _moveFactorY = Input.mousePosition.y - _lastFrameFingerPositionY;
+            _swerveDeltaX = Input.mousePosition.x - _swerveLastXPos;
+            _swerveDeltaY = Input.mousePosition.y - _swerveLastYPos;
 
-            _lastFrameFingerPositionX = Input.mousePosition.x;
-            _lastFrameFingerPositionY = Input.mousePosition.y;
+            _swerveLastXPos = Input.mousePosition.x;
+            _swerveLastYPos = Input.mousePosition.y;
 
-            if (Mathf.Abs(_moveFactorX) <= deadZone)
-            {
-                _moveFactorX = 0f;
-            }
-            if (Mathf.Abs(_moveFactorY) <= deadZone)
-            {
-                _moveFactorY = 0f;
-            }
+            if (Mathf.Abs(_swerveDeltaX) <= swerveThreshold) _swerveDeltaX = 0f;
+            if (Mathf.Abs(_swerveDeltaY) <= swerveThreshold) _swerveDeltaY = 0f;
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            _moveFactorX = 0f;
-            _moveFactorY = 0f;
+            _swerveDeltaX = _swerveDeltaY = 0;
         }
     }
 }

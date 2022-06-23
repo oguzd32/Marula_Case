@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public static class Utilities
@@ -16,9 +13,11 @@ public class GameReferenceHolder : MonoBehaviour
 
     [Header("GameObject References")] 
     public GameObject playerGameObject;
+    public GameObject[] finishConfetties;
 
     [Header("Script References")] 
     public PlayerController playerController;
+    public CameraFollow cameraFollow;
     
     private void Awake()
     {
