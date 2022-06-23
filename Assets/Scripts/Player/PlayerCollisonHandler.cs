@@ -32,7 +32,7 @@ public class PlayerCollisonHandler : MonoBehaviour
         {
             case "Finish":
                 
-                _GameManager.EndGame(true);
+                _GameManager.EndGame(true, controller.heightAmount);
                 movement.enabled = false;
                 break;
             

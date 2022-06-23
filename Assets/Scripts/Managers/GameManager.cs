@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
         _GameReferenceHolder.playerController.StartGame();
     }
 
-    public void EndGame(bool win)
+    public void EndGame(bool win, int amount = 0)
     {
         if (isFinished) return;
 
@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
         if (win)
         {
             UIManager.Instance.OnPlayerCompletedLevel();
+            StartCoroutine(UIManager.Instance.SpawnCoin(_GameReferenceHolder.playerGameObject.transform.position,
+                amount));
         }
         else
         {
